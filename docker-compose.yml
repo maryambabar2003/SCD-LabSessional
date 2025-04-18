@@ -1,0 +1,58 @@
+services:
+  menu-services:
+    build: ./menu-services
+    ports:
+      - "3001:3001"
+    networks:
+      - online-course-platform
+
+  inventory-services:
+    build: ./inventory-services
+    ports:
+      - "3005:3005"
+    networks:
+      - online-course-platform
+
+  customer-services:
+    build: ./customer-services
+    ports:
+      - "3004:3004"
+    networks:
+      - online-course-platform
+
+  payment-services:
+    build: ./payment-services
+    ports:
+      - "3003:3003"
+    depends_on:
+      - order-services
+    networks:
+      - online-course-platform
+
+  order-services:
+    build: ./order-services
+    ports:
+      - "3002:3002"
+    depends_on:
+      - customer-services
+      - menu-services
+      - inventory-services
+    networks:
+      - online-course-platform
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - customer-services
+      - menu-services
+      - inventory-services
+      - order-services
+      - payment-services
+    networks:
+      - online-course-platform
+
+networks:
+  online-course-platform:
+    driver: bridge
